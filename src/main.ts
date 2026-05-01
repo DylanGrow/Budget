@@ -17,9 +17,29 @@ class BudgetApp {
       this.updateStorageInfo();
       
       console.log('Budget App initialized successfully');
+      console.log(`Loaded ${this.categories.length} categories and ${this.transactions.length} transactions`);
     } catch (error) {
       console.error('Failed to initialize app:', error);
-      alert('Failed to initialize app. Please refresh the page.');
+      this.showNotification('Failed to initialize app. Please refresh the page.', 'error');
+      
+      // Show error in UI
+      const app = document.getElementById('app');
+      if (app) {
+        app.innerHTML = `
+          <div style="padding: 2rem; text-align: center;">
+            <h1>⚠️ Initialization Error</h1>
+            <p>Failed to initialize the app. This might be due to:</p>
+            <ul style="text-align: left; max-width: 500px; margin: 1rem auto;">
+              <li>Browser doesn't support IndexedDB</li>
+              <li>Private/Incognito mode restrictions</li>
+              <li>Storage quota exceeded</li>
+            </ul>
+            <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; font-size: 1rem; cursor: pointer;">
+              Refresh Page
+            </button>
+          </div>
+        `;
+      }
     }
   }
 
@@ -76,6 +96,17 @@ class BudgetApp {
     const merchantInput = document.getElementById('merchant') as HTMLInputElement;
 
     try {
+      // Validate inputs
+      if (!amountInput.value || parseFloat(amountInput.value) <= 0) {
+        this.showNotification('Please enter a valid amount', 'error');
+        return;
+      }
+
+      if (!categorySelect.value) {
+        this.showNotification('Please select a category', 'error');
+        return;
+      }
+
       const amount = Math.round(parseFloat(amountInput.value) * 100);
       const category = categorySelect.value;
       const merchant = merchantInput.value.trim() || undefined;
