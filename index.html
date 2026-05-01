@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Privacy-focused offline budget tracker">
+  <meta name="theme-color" content="#4ECDC4">
+  
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; 
+                 script-src 'self'; 
+                 style-src 'self' 'unsafe-inline'; 
+                 img-src 'self' data: blob:; 
+                 font-src 'self';">
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  <title>Budget Tracker</title>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <header>
+        <h1>💰 Budget Tracker</h1>
+        <div class="status">
+          <span id="online-status" class="status-indicator">●</span>
+          <span id="status-text">Online</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="dashboard">
+          <div class="budget-summary">
+            <h2>This Month</h2>
+            <div class="amount">
+              <span id="spent-amount">$0.00</span> / <span id="budget-amount">$0.00</span>
+            </div>
+            <div class="progress-bar">
+              <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <p id="remaining-amount">$0.00 remaining</p>
+          </div>
+
+          <div class="quick-add">
+            <h3>Quick Add Transaction</h3>
+            <form id="quick-add-form">
+              <div class="form-row">
+                <input 
+                  type="number" 
+                  id="amount" 
+                  placeholder="Amount" 
+                  step="0.01" 
+                  required
+                  aria-label="Transaction amount"
+                >
+                <select id="category" required aria-label="Category">
+                  <option value="">Select Category</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <input 
+                  type="text" 
+                  id="merchant" 
+                  placeholder="Merchant (optional)"
+                  aria-label="Merchant name"
+                >
+                <button type="submit" class="btn-primary">Add</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="recent-transactions">
+            <h3>Recent Transactions</h3>
+            <div id="transactions-list" class="transactions-list">
+              <p class="empty-state">No transactions yet. Add your first transaction above!</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="actions">
+          <button id="btn-backup" class="btn-secondary">📦 Create Backup</button>
+          <button id="btn-restore" class="btn-secondary">📥 Restore Backup</button>
+          <button id="btn-export-csv" class="btn-secondary">📊 Export CSV</button>
+        </section>
+      </main>
+
+      <footer>
+        <p>
+          <strong>Privacy-First:</strong> All data stays on your device. 
+          <a href="#" id="learn-more">Learn more</a>
+        </p>
+        <p class="storage-info">
+          Storage: <span id="storage-used">0</span> MB / <span id="storage-quota">0</span> MB
+        </p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Backup Modal -->
+  <div id="backup-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Create Encrypted Backup</h2>
+      <p>Enter a strong passphrase to encrypt your backup:</p>
+      <form id="backup-form">
+        <input 
+          type="password" 
+          id="backup-passphrase" 
+          placeholder="Passphrase (min 8 characters)" 
+          required
+          minlength="8"
+        >
+        <p id="passphrase-strength" class="strength-indicator"></p>
+        <input 
+          type="password" 
+          id="backup-passphrase-confirm" 
+          placeholder="Confirm passphrase" 
+          required
+        >
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Create Backup</button>
+          <button type="button" class="btn-secondary" id="cancel-backup">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Restore Modal -->
+  <div id="restore-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Restore from Backup</h2>
+      <form id="restore-form">
+        <input 
+          type="file" 
+          id="backup-file" 
+          accept=".json" 
+          required
+        >
+        <input 
+          type="password" 
+          id="restore-passphrase" 
+          placeholder="Backup passphrase" 
+          required
+        >
+        <div class="form-group">
+          <label>
+            <input type="radio" name="strategy" value="merge" checked>
+            Merge with existing data
+          </label>
+          <label>
+            <input type="radio" name="strategy" value="replace">
+            Replace all data
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Restore</button>
+          <button type="button" class="btn-secondary" id="cancel-restore">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
