@@ -1,2 +1,7 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://yourusername.github.io/Budget/sitemap.xml
+
+# Budget Tracker - Privacy-focused offline budget manager
+# All data stays on your device

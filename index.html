@@ -3,43 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Privacy-focused offline budget tracker">
+  
+  <!-- Primary Meta Tags -->
+  <title>Budget Tracker - Privacy-Focused Offline Budget Manager</title>
+  <meta name="title" content="Budget Tracker - Privacy-Focused Offline Budget Manager">
+  <meta name="description" content="Free, privacy-first budget tracking app. All data stays on your device. Works offline. Encrypted backups. No ads, no tracking, no cloud sync required.">
+  <meta name="keywords" content="budget tracker, expense tracker, offline budget, privacy budget app, personal finance, money management">
+  <meta name="author" content="Budget PWA">
   <meta name="theme-color" content="#4ECDC4">
+  <meta name="color-scheme" content="light dark">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourusername.github.io/Budget/">
+  <meta property="og:title" content="Budget Tracker - Privacy-Focused Offline Budget Manager">
+  <meta property="og:description" content="Free, privacy-first budget tracking app. All data stays on your device. Works offline with encrypted backups.">
+  <meta property="og:image" content="https://yourusername.github.io/Budget/icon.svg">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://yourusername.github.io/Budget/">
+  <meta property="twitter:title" content="Budget Tracker - Privacy-Focused Offline Budget Manager">
+  <meta property="twitter:description" content="Free, privacy-first budget tracking app. All data stays on your device. Works offline with encrypted backups.">
+  <meta property="twitter:image" content="https://yourusername.github.io/Budget/icon.svg">
   
   <!-- Security Headers -->
   <meta http-equiv="Content-Security-Policy" 
         content="default-src 'self'; 
                  script-src 'self'; 
-                 style-src 'self' 'unsafe-inline'; 
+                 style-src 'self'; 
                  img-src 'self' data: blob:; 
-                 font-src 'self';">
+                 font-src 'self'; 
+                 connect-src 'self'; 
+                 worker-src 'self'; 
+                 manifest-src 'self';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
   
   <!-- PWA -->
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/Budget/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/Budget/favicon.svg">
+  <link rel="apple-touch-icon" href="/Budget/icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Budget">
   
-  <title>Budget Tracker</title>
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://yourusername.github.io/Budget/">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Budget Tracker",
+    "description": "Privacy-focused offline budget tracking application",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Offline functionality",
+      "Encrypted backups",
+      "Privacy-first design",
+      "No cloud sync required",
+      "Transaction tracking",
+      "Budget management"
+    ]
+  }
+  </script>
+  
+  <!-- Critical CSS - Inline for performance -->
+  <style>
+    :root{--primary:#4ECDC4;--primary-hover:#3db8b0;--primary-light:rgba(78,205,196,0.15);--accent:#FF6B6B;--success:#51CF66;--background:#F4F7F8;--surface:#FFFFFF;--text-primary:#1A1F24;--text-secondary:#718096;--border:#EDF2F7;--radius-lg:16px;--radius-md:12px;--shadow-sm:0 2px 8px rgba(0,0,0,0.04);--shadow-md:0 8px 24px rgba(0,0,0,0.06)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;background-color:var(--background);color:var(--text-primary);line-height:1.5;-webkit-font-smoothing:antialiased}.container{max-width:540px;margin:0 auto;padding:1.5rem;min-height:100vh;display:flex;flex-direction:column}header{display:flex;justify-content:space-between;align-items:center;padding-bottom:1.5rem;margin-bottom:1.5rem}h1{font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;color:var(--text-primary)}@media(prefers-color-scheme:dark){:root{--background:#0F172A;--surface:#1E293B;--text-primary:#F8FAFC;--text-secondary:#94A3B8;--border:#334155;--primary-light:rgba(78,205,196,0.1)}}
+  </style>
 </head>
 <body>
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
   <div id="app">
     <div class="container">
       <header>
         <h1>💰 Budget Tracker</h1>
         <div class="status">
-          <span id="online-status" class="status-indicator">●</span>
+          <span id="online-status" class="status-indicator" aria-label="Connection status">●</span>
           <span id="status-text">Online</span>
         </div>
       </header>
 
-      <main>
-        <section class="dashboard">
+      <main id="main-content">
+        <section class="dashboard" aria-label="Budget dashboard">
           <div class="budget-summary">
             <h2>This Month</h2>
-            <div class="amount">
+            <div class="amount" role="status" aria-live="polite">
               <span id="spent-amount">$0.00</span> / <span id="budget-amount">$0.00</span>
             </div>
-            <div class="progress-bar">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
               <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
             </div>
             <p id="remaining-amount">$0.00 remaining</p>
@@ -47,17 +111,20 @@
 
           <div class="quick-add">
             <h3>Quick Add Transaction</h3>
-            <form id="quick-add-form">
+            <form id="quick-add-form" aria-label="Add transaction form">
               <div class="form-row">
                 <input 
                   type="number" 
                   id="amount" 
+                  name="amount"
                   placeholder="Amount" 
                   step="0.01" 
+                  min="0"
                   required
                   aria-label="Transaction amount"
+                  aria-required="true"
                 >
-                <select id="category" required aria-label="Category">
+                <select id="category" name="category" required aria-label="Category" aria-required="true">
                   <option value="">Select Category</option>
                 </select>
               </div>
@@ -65,35 +132,37 @@
                 <input 
                   type="text" 
                   id="merchant" 
+                  name="merchant"
                   placeholder="Merchant (optional)"
                   aria-label="Merchant name"
+                  maxlength="100"
                 >
-                <button type="submit" class="btn-primary">Add</button>
+                <button type="submit" class="btn-primary" aria-label="Add transaction">Add</button>
               </div>
             </form>
           </div>
 
           <div class="recent-transactions">
             <h3>Recent Transactions</h3>
-            <div id="transactions-list" class="transactions-list">
+            <div id="transactions-list" class="transactions-list" role="list" aria-label="Recent transactions">
               <p class="empty-state">No transactions yet. Add your first transaction above!</p>
             </div>
           </div>
         </section>
 
-        <section class="actions">
-          <button id="btn-backup" class="btn-secondary">📦 Create Backup</button>
-          <button id="btn-restore" class="btn-secondary">📥 Restore Backup</button>
-          <button id="btn-export-csv" class="btn-secondary">📊 Export CSV</button>
+        <section class="actions" aria-label="Data management actions">
+          <button id="btn-backup" class="btn-secondary" aria-label="Create encrypted backup">📦 Create Backup</button>
+          <button id="btn-restore" class="btn-secondary" aria-label="Restore from backup">📥 Restore Backup</button>
+          <button id="btn-export-csv" class="btn-secondary" aria-label="Export data as CSV">📊 Export CSV</button>
         </section>
       </main>
 
       <footer>
         <p>
           <strong>Privacy-First:</strong> All data stays on your device. 
-          <a href="#" id="learn-more">Learn more</a>
+          <a href="#privacy" id="learn-more" aria-label="Learn more about privacy">Learn more</a>
         </p>
-        <p class="storage-info">
+        <p class="storage-info" role="status" aria-live="polite">
           Storage: <span id="storage-used">0</span> MB / <span id="storage-quota">0</span> MB
         </p>
       </footer>
@@ -101,24 +170,32 @@
   </div>
 
   <!-- Backup Modal -->
-  <div id="backup-modal" class="modal" style="display: none;">
+  <div id="backup-modal" class="modal" role="dialog" aria-labelledby="backup-modal-title" aria-modal="true" style="display: none;">
     <div class="modal-content">
-      <h2>Create Encrypted Backup</h2>
+      <h2 id="backup-modal-title">Create Encrypted Backup</h2>
       <p>Enter a strong passphrase to encrypt your backup:</p>
       <form id="backup-form">
         <input 
           type="password" 
           id="backup-passphrase" 
+          name="passphrase"
           placeholder="Passphrase (min 8 characters)" 
           required
           minlength="8"
+          autocomplete="new-password"
+          aria-label="Backup passphrase"
+          aria-required="true"
         >
-        <p id="passphrase-strength" class="strength-indicator"></p>
+        <p id="passphrase-strength" class="strength-indicator" role="status" aria-live="polite"></p>
         <input 
           type="password" 
           id="backup-passphrase-confirm" 
+          name="passphrase-confirm"
           placeholder="Confirm passphrase" 
           required
+          autocomplete="new-password"
+          aria-label="Confirm passphrase"
+          aria-required="true"
         >
         <div class="modal-actions">
           <button type="submit" class="btn-primary">Create Backup</button>
@@ -129,23 +206,31 @@
   </div>
 
   <!-- Restore Modal -->
-  <div id="restore-modal" class="modal" style="display: none;">
+  <div id="restore-modal" class="modal" role="dialog" aria-labelledby="restore-modal-title" aria-modal="true" style="display: none;">
     <div class="modal-content">
-      <h2>Restore from Backup</h2>
+      <h2 id="restore-modal-title">Restore from Backup</h2>
       <form id="restore-form">
         <input 
           type="file" 
           id="backup-file" 
+          name="backup-file"
           accept=".json" 
           required
+          aria-label="Select backup file"
+          aria-required="true"
         >
         <input 
           type="password" 
           id="restore-passphrase" 
+          name="restore-passphrase"
           placeholder="Backup passphrase" 
           required
+          autocomplete="current-password"
+          aria-label="Backup passphrase"
+          aria-required="true"
         >
-        <div class="form-group">
+        <fieldset class="form-group">
+          <legend class="sr-only">Restore strategy</legend>
           <label>
             <input type="radio" name="strategy" value="merge" checked>
             Merge with existing data
@@ -154,7 +239,7 @@
             <input type="radio" name="strategy" value="replace">
             Replace all data
           </label>
-        </div>
+        </fieldset>
         <div class="modal-actions">
           <button type="submit" class="btn-primary">Restore</button>
           <button type="button" class="btn-secondary" id="cancel-restore">Cancel</button>
@@ -163,6 +248,18 @@
     </div>
   </div>
 
-  <script type="module" src="/src/main.ts"></script>
+  <!-- Load full CSS -->
+  <link rel="stylesheet" href="/Budget/src/styles/main.css">
+  
+  <!-- Load app script -->
+  <script type="module" src="/Budget/src/main.ts"></script>
+  
+  <!-- Noscript fallback -->
+  <noscript>
+    <div style="padding: 2rem; text-align: center; background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; border-radius: 8px; margin: 2rem;">
+      <h2>JavaScript Required</h2>
+      <p>This application requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+    </div>
+  </noscript>
 </body>
 </html>

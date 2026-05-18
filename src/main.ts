@@ -6,6 +6,27 @@ import './styles/main.css';
 class BudgetApp {
   private categories: Category[] = [];
   private transactions: Transaction[] = [];
+  private deferredPrompt: any = null;
+
+  // XSS Protection - Sanitize HTML
+  private sanitizeHTML(str: string): string {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Escape HTML for safe rendering
+  private escapeHTML(str: string): string {
+    const map: Record<string, string> = {
+      '&': '&',
+      '<': '<',
+      '>': '>',
+      '"': '"',
+      "'": '&#x27;',
+      '/': '&#x2F;'
+    };
+    return str.replace(/[&<>"'/]/g, (char) => map[char]);
+  }
 
   async init() {
     try {
@@ -15,6 +36,8 @@ class BudgetApp {
       this.updateUI();
       this.setupOnlineStatus();
       this.updateStorageInfo();
+      this.setupInstallPrompt();
+      this.handleSPARedirect();
       
       console.log('Budget App initialized successfully');
       console.log(`Loaded ${this.categories.length} categories and ${this.transactions.length} transactions`);
@@ -179,13 +202,17 @@ class BudgetApp {
       const category = this.categories.find(c => c.id === tx.category);
       const date = new Date(tx.date);
       const dateStr = this.formatDate(date);
+      
+      // XSS Protection: Escape all user-provided content
+      const merchantSafe = this.escapeHTML(tx.merchant || 'Transaction');
+      const categorySafe = this.escapeHTML(category?.name || 'Unknown');
 
       return `
-        <div class="transaction-item">
-          <div class="transaction-icon">${category?.icon || '📦'}</div>
+        <div class="transaction-item" role="listitem">
+          <div class="transaction-icon" aria-hidden="true">${category?.icon || '📦'}</div>
           <div class="transaction-details">
-            <div class="transaction-merchant">${tx.merchant || 'Transaction'}</div>
-            <div class="transaction-category">${category?.name || 'Unknown'} • ${dateStr}</div>
+            <div class="transaction-merchant">${merchantSafe}</div>
+            <div class="transaction-category">${categorySafe} • ${dateStr}</div>
           </div>
           <div class="transaction-amount">-${this.formatCurrency(tx.amount)}</div>
         </div>
@@ -339,6 +366,74 @@ class BudgetApp {
       document.getElementById('storage-quota')!.textContent = (quota / (1024 * 1024)).toFixed(0);
     } catch (error) {
       console.error('Failed to get storage info:', error);
+    }
+  }
+
+  private setupInstallPrompt() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      this.showInstallPrompt();
+    });
+
+    window.addEventListener('appinstalled', () => {
+      this.deferredPrompt = null;
+      this.hideInstallPrompt();
+      this.showNotification('App installed successfully!', 'success');
+    });
+  }
+
+  private showInstallPrompt() {
+    const existingPrompt = document.getElementById('install-prompt');
+    if (existingPrompt) return;
+
+    const prompt = document.createElement('div');
+    prompt.id = 'install-prompt';
+    prompt.className = 'install-prompt';
+    prompt.innerHTML = `
+      <div class="install-prompt-content">
+        <div class="install-prompt-title">Install Budget Tracker</div>
+        <div class="install-prompt-text">Install this app for quick access and offline use</div>
+      </div>
+      <div class="install-prompt-actions">
+        <button class="btn-primary" id="install-btn">Install</button>
+        <button class="btn-secondary" id="dismiss-install">Not now</button>
+      </div>
+    `;
+    document.body.appendChild(prompt);
+
+    document.getElementById('install-btn')?.addEventListener('click', async () => {
+      if (!this.deferredPrompt) return;
+      
+      this.deferredPrompt.prompt();
+      const { outcome } = await this.deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      }
+      
+      this.deferredPrompt = null;
+      this.hideInstallPrompt();
+    });
+
+    document.getElementById('dismiss-install')?.addEventListener('click', () => {
+      this.hideInstallPrompt();
+    });
+  }
+
+  private hideInstallPrompt() {
+    const prompt = document.getElementById('install-prompt');
+    if (prompt) {
+      prompt.remove();
+    }
+  }
+
+  private handleSPARedirect() {
+    const redirect = sessionStorage.getItem('redirect');
+    if (redirect) {
+      sessionStorage.removeItem('redirect');
+      // Handle any SPA routing if needed
+      console.log('Redirected from:', redirect);
     }
   }
 
